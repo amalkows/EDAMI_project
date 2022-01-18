@@ -15,13 +15,21 @@ vector<int> clara(
     for (int i = 0; i < random_group_count; ++i)
         datasets[i] = draw_data(points, random_group_size);
 
-    // for each group run pam - multithread or in loop
+    vector<vector<vector<float>>> alternative_centroids(random_group_count);
+    if (multithread)
+    {
+    }
+    else
+    {
+        for (int i = 0; i < random_group_count; ++i)
+            alternative_centroids[i] = pam(datasets[i], cluster_count, minkowski_n, max_swap, optimized_pam_init);
+    }
 
     // score each clustering
 
     // select best clustering
-
-    return pam(points, cluster_count, minkowski_n, max_swap, optimized_pam_init);
+    vector<int> res;
+    return res;
 }
 
 vector<vector<float>> draw_data(vector<vector<float>> points, int random_group_size)
@@ -45,7 +53,7 @@ vector<vector<float>> draw_data(vector<vector<float>> points, int random_group_s
 
 //calculate average disimilarity for all points based on clusters
 
-vector<int> pam(vector<vector<float>> points, int cluster_count, int minkowski_n, int max_swap, bool optimized_pam_init)
+vector<vector<float>> pam(vector<vector<float>> points, int cluster_count, int minkowski_n, int max_swap, bool optimized_pam_init)
 {
     vector<vector<float>> distance_points_matrix(points.size());
     for (int i = 0; i < points.size(); ++i)
@@ -110,7 +118,11 @@ vector<int> pam(vector<vector<float>> points, int cluster_count, int minkowski_n
         non_centroids[min_T_h] = tmp;
     }
 
-    return centroids;
+    vector<vector<float>> res(cluster_count);
+    for (int i = 0; i < cluster_count; ++i)
+        res[i] = points[centroids[i]];
+
+    return res;
 }
 
 tuple<float, float> calculate_d_j(vector<vector<float>> distance_points_matrix, vector<int> centroids, int j)
