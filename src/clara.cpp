@@ -1,13 +1,51 @@
 #include "clara.h"
 
-vector<int> clara(vector<vector<float>> points, int cluster_count, int minkowski_n, int max_swap)
+vector<int> clara(
+    vector<vector<float>> points,
+    int cluster_count,
+    int random_group_count,
+    int random_group_size,
+    int minkowski_n,
+    int max_swap,
+    bool multithread,
+    bool optimized_pam_init)
 {
-    // vector<int> res;
+    random_group_size = min(random_group_size, (int)points.size());
+    vector<vector<vector<float>>> datasets(random_group_count);
+    for (int i = 0; i < random_group_count; ++i)
+        datasets[i] = draw_data(points, random_group_size);
 
-    return pam(points, cluster_count, minkowski_n, max_swap);
+    // for each group run pam - multithread or in loop
+
+    // score each clustering
+
+    // select best clustering
+
+    return pam(points, cluster_count, minkowski_n, max_swap, optimized_pam_init);
 }
 
-vector<int> pam(vector<vector<float>> points, int cluster_count, int minkowski_n, int max_swap)
+vector<vector<float>> draw_data(vector<vector<float>> points, int random_group_size)
+{
+    random_device rd;
+    mt19937 g(rd());
+
+    vector<int> candidates(points.size());
+    iota(candidates.begin(), candidates.end(), 0);
+    shuffle(candidates.begin(), candidates.end(), g);
+
+    vector<int> selected_data_indexes(candidates.begin(), candidates.begin() + random_group_size);
+
+    vector<vector<float>> results(random_group_size);
+
+    for (int i = 0; i < random_group_size; ++i)
+        results[i] = points[selected_data_indexes[i]];
+
+    return results;
+}
+
+//calculate average disimilarity for all points based on clusters
+
+vector<int> pam(vector<vector<float>> points, int cluster_count, int minkowski_n, int max_swap, bool optimized_pam_init)
 {
     vector<vector<float>> distance_points_matrix(points.size());
     for (int i = 0; i < points.size(); ++i)
@@ -20,7 +58,7 @@ vector<int> pam(vector<vector<float>> points, int cluster_count, int minkowski_n
         distance_points_matrix[i] = distances_tmp;
     }
 
-    vector<vector<int>> centroids_data = init_centroids(points, cluster_count);
+    vector<vector<int>> centroids_data = init_centroids(points, cluster_count); //TODO optimized_pam_init
     vector<int> centroids = centroids_data[0];
     vector<int> non_centroids = centroids_data[1];
 

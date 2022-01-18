@@ -12,7 +12,7 @@ int main()
     dataset = load_data("toy");
 
     vector<int> clustering_dbscan = dbscan(dataset.points, 3, 2);
-    vector<int> clustering_clara = clara(dataset.points, 2);
+    vector<int> clustering_clara = clara(dataset.points, 2, 5, 3);
 
     for (int i = 0; i < clustering_dbscan.size(); i++)
         cout << clustering_dbscan[i] << " ";
