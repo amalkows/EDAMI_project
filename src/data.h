@@ -8,15 +8,15 @@
 #include <iostream>
 #include <iterator>
 
-using namespace std;
+// using namespace std;
 
 class Data
 {
 public:
-    vector<vector<float>> points;
-    vector<int> labels;
+    std::vector<std::vector<float>> points;
+    std::vector<int> labels;
 };
 
-Data load_data(string name);
+Data load_data(std::string name);
 
 #endif

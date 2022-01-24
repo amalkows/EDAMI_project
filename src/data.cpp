@@ -1,6 +1,6 @@
 #include "data.h"
 
-Data load_data(string name)
+Data load_data(std::string name)
 {
     Data res;
     if (name == "toy")
@@ -22,14 +22,14 @@ Data load_data(string name)
     }
     else if (name == "dim512")
     {
-        ifstream coordinates_file("./datasets/dim512.txt");
+        std::ifstream coordinates_file("./datasets/dim512.txt");
         if (coordinates_file.is_open())
         {
-            string line;
+            std::string line;
             while (std::getline(coordinates_file, line))
             {
-                vector<float> coordinats;
-                stringstream iss(line);
+                std::vector<float> coordinats;
+                std::stringstream iss(line);
                 float number;
                 while (iss >> number)
                     coordinats.push_back(number);
@@ -39,10 +39,10 @@ Data load_data(string name)
             coordinates_file.close();
         }
 
-        ifstream labels_file("./datasets/dim512.pa");
+        std::ifstream labels_file("./datasets/dim512.pa");
         if (labels_file.is_open())
         {
-            string line;
+            std::string line;
             int i = 0;
             while (getline(labels_file, line))
             {
@@ -57,7 +57,7 @@ Data load_data(string name)
     }
     else
     {
-        string path;
+        std::string path;
         int dim;
         if (name == "cluto-t7-10k")
         {
@@ -79,30 +79,37 @@ Data load_data(string name)
 
         if (file.is_open())
         {
-            string line;
-            while (getline(file, line))
+            std::string line;
+            while (std::getline(file, line))
             {
                 if (line == "@DATA" | line == "@data")
                     break;
             }
 
-            while (getline(file, line))
+            while (std::getline(file, line))
             {
-                vector<float> coordinats;
-                stringstream iss(line);
-                // std::copy(istream_iterator<float>(iss),
-                //           std::istream_iterator<float>(),
-                //           std::back_inserter(coordinats));
+                std::vector<float> coordinats;
+                std::istringstream line_stream(line);
+                std::string token;
+
                 for (int i = 0; i < dim; ++i)
                 {
-                    float v = 0;
-                    iss >> v;
+                    std::getline(line_stream, token, ',');
+                    float v = atof(token.c_str());
                     coordinats.push_back(v);
                 }
+                std::getline(line_stream, token, ',');
+
                 int label;
-                iss >> label;
-                res.labels.push_back(label);
+                if (token == "noise")
+                    label = -1;
+                else if (isalpha(token[0]))
+                    label = token[0] - 'A';
+                else
+                    label = stoi(token);
+
                 res.points.push_back(coordinats);
+                res.labels.push_back(label);
             }
             file.close();
         }
