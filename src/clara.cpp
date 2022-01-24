@@ -15,21 +15,53 @@ vector<int> clara(
     for (int i = 0; i < random_group_count; ++i)
         datasets[i] = draw_data(points, random_group_size);
 
-    vector<vector<vector<float>>> alternative_centroids(random_group_count);
+    float best_dist = numeric_limits<float>::max();
+    vector<int> best_clustering;
+
     if (multithread)
     {
+        //optimization!
     }
     else
     {
         for (int i = 0; i < random_group_count; ++i)
-            alternative_centroids[i] = pam(datasets[i], cluster_count, minkowski_n, max_swap, optimized_pam_init);
+        {
+            std::cout << "PAM number: " << i << endl;
+            vector<vector<float>> centroids = pam(datasets[i], cluster_count, minkowski_n, max_swap, optimized_pam_init);
+            auto res = prepare_clustering_based_on_centroids(centroids, points, minkowski_n);
+            float curr_dist = get<0>(res);
+            if (curr_dist < best_dist)
+            {
+                best_clustering = get<1>(res);
+                best_dist = curr_dist;
+            }
+        }
+    }
+    return best_clustering;
+}
+
+tuple<float, vector<int>> prepare_clustering_based_on_centroids(vector<vector<float>> centroids, vector<vector<float>> points, int minkowski_n)
+{
+    vector<int> clustering(points.size());
+    float distance = 0;
+
+    for (int i = 0; i < points.size(); ++i)
+    {
+        float best_centroid_dist = numeric_limits<float>::max();
+        int best_centroid;
+        for (int j = 0; j < centroids.size(); ++j)
+        {
+            float dist = minkowski_distance(points[i], centroids[j], minkowski_n);
+            if (dist < best_centroid_dist)
+            {
+                best_centroid_dist = dist;
+                best_centroid = j;
+            }
+        }
+        clustering[i] = best_centroid;
     }
 
-    // score each clustering
-
-    // select best clustering
-    vector<int> res;
-    return res;
+    return {distance, clustering};
 }
 
 vector<vector<float>> draw_data(vector<vector<float>> points, int random_group_size)
@@ -51,8 +83,6 @@ vector<vector<float>> draw_data(vector<vector<float>> points, int random_group_s
     return results;
 }
 
-//calculate average disimilarity for all points based on clusters
-
 vector<vector<float>> pam(vector<vector<float>> points, int cluster_count, int minkowski_n, int max_swap, bool optimized_pam_init)
 {
     vector<vector<float>> distance_points_matrix(points.size());
@@ -66,7 +96,7 @@ vector<vector<float>> pam(vector<vector<float>> points, int cluster_count, int m
         distance_points_matrix[i] = distances_tmp;
     }
 
-    vector<vector<int>> centroids_data = init_centroids(points, cluster_count); //TODO optimized_pam_init
+    vector<vector<int>> centroids_data = init_centroids(points, cluster_count, optimized_pam_init);
     vector<int> centroids = centroids_data[0];
     vector<int> non_centroids = centroids_data[1];
 
@@ -142,7 +172,7 @@ tuple<float, float> calculate_d_j(vector<vector<float>> distance_points_matrix, 
 }
 
 //BUILD BEZ OPTYMALIZACJI - i fajnie! mozna tutaj dac optymalizacje jako druga wersje - wybrac obiekty o najmniejszej sumie odleglosci do wszystkich innych
-vector<vector<int>> init_centroids(vector<vector<float>> points, int cluster_count)
+vector<vector<int>> init_centroids(vector<vector<float>> points, int cluster_count, bool optimized_pam_init)
 {
     //init random numer generator
     random_device rd;
