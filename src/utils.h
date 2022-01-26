@@ -3,9 +3,10 @@
 
 #include <vector>
 #include <cmath>
+#include "data.h"
 
 using namespace std;
 
-float minkowski_distance(vector<float> a, vector<float> b, int n = 2);
+float minkowski_distance(Point *a, Point *b, int n = 2);
 
 #endif

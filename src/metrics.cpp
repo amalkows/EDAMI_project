@@ -1,6 +1,6 @@
 #include "metrics.h"
 
-float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters)
+/*float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters)
 {
     int n = true_clusters.size();
     int result = 0;
@@ -59,10 +59,10 @@ float rand_score(vector<int> true_clusters, vector<int> predicted_clusters)
     return (float)numerator / (float)denominator;
 }
 
-vector<vector<float>> calculate_centroids(vector<vector<float>> points, vector<int> clusters)
+vector<Point *> calculate_centroids(vector<Point *> points, vector<int> clusters)
 {
     int cluster_count = *max_element(clusters.begin(), clusters.end()) + 1;
-    int dim = points[0].size();
+    int dim = points[0]->coords.size();
 
     vector<vector<float>> result(cluster_count, vector<float>(dim));
     vector<int> cluster_size(cluster_count);
@@ -232,3 +232,4 @@ float silhouette_coefficient(vector<vector<float>> points, vector<int> clusters)
 
     return result / points_in_clusters;
 }
+*/

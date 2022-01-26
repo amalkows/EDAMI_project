@@ -5,7 +5,7 @@ Data load_data(std::string name)
     Data res;
     if (name == "toy")
     {
-        res.points = {
+        std::vector<std::vector<float>> tmp = {
             {4.2, 4.0},  //A 0
             {5.9, 3.9},  //B 1
             {2.8, 3.5},  //C 2
@@ -19,6 +19,11 @@ Data load_data(std::string name)
             {0.9, 0.0},  //K 10
             {1.0, 1.5},  //L 11
         };
+        for (int i = 0; i < tmp.size(); ++i)
+        {
+            Point *new_point = new Point(i, tmp[i]);
+            res.points.push_back(new_point);
+        }
     }
     else if (name == "dim512")
     {
@@ -26,6 +31,7 @@ Data load_data(std::string name)
         if (coordinates_file.is_open())
         {
             std::string line;
+            int i = 0;
             while (std::getline(coordinates_file, line))
             {
                 std::vector<float> coordinats;
@@ -34,7 +40,9 @@ Data load_data(std::string name)
                 while (iss >> number)
                     coordinats.push_back(number);
 
-                res.points.push_back(coordinats);
+                Point *new_point = new Point(i, coordinats);
+                res.points.push_back(new_point);
+                i++;
             }
             coordinates_file.close();
         }
@@ -85,7 +93,7 @@ Data load_data(std::string name)
                 if (line == "@DATA" | line == "@data")
                     break;
             }
-
+            int point_index = 0;
             while (std::getline(file, line))
             {
                 std::vector<float> coordinats;
@@ -108,8 +116,11 @@ Data load_data(std::string name)
                 else
                     label = stoi(token);
 
-                res.points.push_back(coordinats);
+                Point *new_point = new Point(point_index, coordinats);
+                res.points.push_back(new_point);
                 res.labels.push_back(label);
+
+                point_index++;
             }
             file.close();
         }

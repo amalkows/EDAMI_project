@@ -1,8 +1,8 @@
 #include "dbscan.h"
 
 vector<int> eps_neighborhood(
-    vector<float> ref,
-    vector<vector<float>> points,
+    Point *ref,
+    vector<Point *> points,
     float eps,
     int minkowski_n)
 {
@@ -15,7 +15,7 @@ vector<int> eps_neighborhood(
     return result;
 }
 
-vector<int> dbscan(vector<vector<float>> points, float eps, int min_pts, int minkowski_n)
+vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n)
 {
     const int NON_VISITED_YET = -2;
     const int NON_CORE = -1;
