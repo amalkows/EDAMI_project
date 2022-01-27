@@ -7,6 +7,6 @@
 
 using namespace std;
 
-float minkowski_distance(Point *a, Point *b, int n = 2);
+float minkowski_distance(Point *a, Point *b, int n = 2, bool update_stats = true);
 
 #endif

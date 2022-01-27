@@ -1,6 +1,6 @@
 #include "metrics.h"
 
-/*float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters)
+float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters)
 {
     int n = true_clusters.size();
     int result = 0;
@@ -54,7 +54,7 @@ float rand_score(vector<int> true_clusters, vector<int> predicted_clusters)
     }
 
     int numerator = TP + TN;
-    int denominator = factorial(n) / (2 * factorial(n - 2));
+    int denominator = (n * (n - 1)) / 2;
 
     return (float)numerator / (float)denominator;
 }
@@ -64,31 +64,34 @@ vector<Point *> calculate_centroids(vector<Point *> points, vector<int> clusters
     int cluster_count = *max_element(clusters.begin(), clusters.end()) + 1;
     int dim = points[0]->coords.size();
 
-    vector<vector<float>> result(cluster_count, vector<float>(dim));
+    vector<Point *> result(cluster_count);
+    for (int i = 0; i < cluster_count; ++i)
+        result[i] = new Point(dim);
+
     vector<int> cluster_size(cluster_count);
 
     for (int k = 0; k < points.size(); k++)
         if (clusters[k] >= 0)
         {
             for (int i = 0; i < dim; i++)
-                result[clusters[k]][i] += points[k][i];
+                result[clusters[k]]->coords[i] += points[k]->coords[i];
             cluster_size[clusters[k]]++;
         }
 
     for (int j = 0; j < cluster_count; j++)
         for (int i = 0; i < dim; i++)
-            result[j][i] = result[j][i] / cluster_size[j];
+            result[j]->coords[i] = result[j]->coords[i] / cluster_size[j];
 
     return result;
 }
 
 vector<float> calculate_average_distance_of_points_to_centroids(
-    vector<vector<float>> points,
+    vector<Point *> points,
     vector<int> clusters,
-    vector<vector<float>> centroids)
+    vector<Point *> centroids)
 {
     int cluster_count = centroids.size();
-    int dim = points[0].size();
+    int dim = points[0]->coords.size();
     vector<int> cluster_size(cluster_count);
 
     vector<float> result(cluster_count);
@@ -96,7 +99,7 @@ vector<float> calculate_average_distance_of_points_to_centroids(
     for (int k = 0; k < points.size(); k++)
         if (clusters[k] >= 0)
         {
-            result[clusters[k]] += minkowski_distance(points[k], centroids[clusters[k]]);
+            result[clusters[k]] += minkowski_distance(points[k], centroids[clusters[k]], 2, false);
             cluster_size[clusters[k]]++;
         }
 
@@ -106,7 +109,7 @@ vector<float> calculate_average_distance_of_points_to_centroids(
     return result;
 }
 
-vector<vector<float>> calculate_distance_between_centroids(vector<vector<float>> centroids)
+vector<vector<float>> calculate_distance_between_centroids(vector<Point *> centroids)
 {
     int n = centroids.size();
     vector<vector<float>> result(n, vector<float>(n));
@@ -114,17 +117,17 @@ vector<vector<float>> calculate_distance_between_centroids(vector<vector<float>>
     for (int i = 0; i < n; i++)
         for (int j = 0; j < n; j++)
             if (i != j)
-                result[i][j] = minkowski_distance(centroids[i], centroids[j]);
+                result[i][j] = minkowski_distance(centroids[i], centroids[j], 2, false);
 
     return result;
 }
 
-float davies_bouldin_score(vector<vector<float>> points, vector<int> predicted_clusters)
+float davies_bouldin_score(vector<Point *> points, vector<int> predicted_clusters)
 {
     //length assert
     int n = points.size();
 
-    vector<vector<float>> centroids = calculate_centroids(points, predicted_clusters);
+    vector<Point *> centroids = calculate_centroids(points, predicted_clusters);
     vector<float> average_distance_of_points_to_centroids = calculate_average_distance_of_points_to_centroids(
         points, predicted_clusters, centroids);
     vector<vector<float>> distance_between_centroids = calculate_distance_between_centroids(centroids);
@@ -149,11 +152,11 @@ float davies_bouldin_score(vector<vector<float>> points, vector<int> predicted_c
     return result / centroid_count;
 }
 
-vector<vector<float>> calculate_average_dist_to_all_points_in_cluster(vector<vector<float>> points, vector<int> clusters, vector<int> cluster_sizes)
+vector<vector<float>> calculate_average_dist_to_all_points_in_cluster(vector<Point *> points, vector<int> clusters, vector<int> cluster_sizes)
 {
     int cluster_count = *max_element(clusters.begin(), clusters.end()) + 1;
     int n = points.size();
-    int dim = points[0].size();
+    int dim = points[0]->coords.size();
 
     vector<vector<float>> result(n, vector<float>(cluster_count));
 
@@ -162,7 +165,7 @@ vector<vector<float>> calculate_average_dist_to_all_points_in_cluster(vector<vec
         {
             for (int j = 0; j < n; j++)
                 if ((clusters[j] >= 0) && (i != j))
-                    result[i][clusters[j]] += minkowski_distance(points[i], points[j]);
+                    result[i][clusters[j]] += minkowski_distance(points[i], points[j], 2, false);
         }
 
     for (int i = 0; i < n; i++)
@@ -213,7 +216,7 @@ vector<int> calculate_cluster_sizes(vector<int> clusters)
     return cluster_sizes;
 }
 
-float silhouette_coefficient(vector<vector<float>> points, vector<int> clusters)
+float silhouette_coefficient(vector<Point *> points, vector<int> clusters)
 {
     //length assert
     int n = points.size();
@@ -232,4 +235,3 @@ float silhouette_coefficient(vector<vector<float>> points, vector<int> clusters)
 
     return result / points_in_clusters;
 }
-*/

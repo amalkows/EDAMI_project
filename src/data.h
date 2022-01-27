@@ -8,23 +8,21 @@
 #include <iostream>
 #include <iterator>
 
-// using namespace std;
-
 class Point
 {
 public:
     Point()
     {
     }
-    // Point(const Point &p)
-    // {
-    //     coords = p.coords;
-    //     metric_calculate_count = p.metric_calculate_count;
-    // }
     Point(int init_index, std::vector<float> init_coords)
     {
         coords = init_coords;
         index = init_index;
+    }
+    Point(int dim)
+    {
+        for (int i = 0; i < dim; ++i)
+            coords.push_back(0);
     }
     int index;
     std::vector<float> coords;
