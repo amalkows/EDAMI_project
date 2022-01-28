@@ -60,11 +60,13 @@ int main(int argc, char **argv)
 
     vector<int> clustering;
     vector<string> times;
+    vector<Point *> medoids;
     if (model_name == "clara")
     {
         auto clustering_res = clara(dataset.points, clouster_count, random_group_count, random_group_size, minkowski_n, max_swap);
         clustering = get<0>(clustering_res);
         times = get<1>(clustering_res);
+        medoids = get<2>(clustering_res);
     }
     else if (model_name == "dbscan")
     {
@@ -87,7 +89,21 @@ int main(int argc, char **argv)
             row_text += std::to_string(dataset.points[i]->coords[d]) + ","; //na pozniej - poprawic zeby zapisywal jako inty nie floaty
 
         row_text += std::to_string(dataset.points[i]->metric_calculate_count) + ",";
-        row_text += "0,"; // POINT TYPE!!!
+        if (model_name == "clara")
+        {
+            int medoid = 0;
+            for (int m = 0; m < medoids.size(); m++)
+                if (medoids[m]->index == i)
+                {
+                    medoid = 1;
+                    break;
+                }
+            row_text += std::to_string(medoid) + ",";
+        }
+        else
+        {
+            row_text += "0,";
+        }
         row_text += std::to_string(clustering[i]);
         row_text += '\n';
 
@@ -116,12 +132,8 @@ int main(int argc, char **argv)
     stat_text += "Time of data loading [s]: " + std::to_string(data_load_duration.count() / 1000000) + "\n";
 
     if (model_name == "clara")
-    {
         for (int i = 0; i < times.size(); ++i)
-        {
             stat_text += "Time of " + to_string(i) + " PAM [s]: " + times[i] + "\n";
-        }
-    }
     else if (model_name == "dbscan")
     {
     }

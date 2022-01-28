@@ -1,6 +1,6 @@
 #include "clara.h"
 
-tuple<vector<int>, vector<string>> clara(
+tuple<vector<int>, vector<string>, vector<Point *>> clara(
     vector<Point *> points,
     int cluster_count,
     int random_group_count,
@@ -19,6 +19,7 @@ tuple<vector<int>, vector<string>> clara(
 
     float best_dist = numeric_limits<float>::max();
     vector<int> best_clustering;
+    vector<Point *> best_centroids;
     vector<string> times;
     if (multithread)
     {
@@ -38,13 +39,14 @@ tuple<vector<int>, vector<string>> clara(
             {
                 best_clustering = get<1>(res);
                 best_dist = curr_dist;
+                best_centroids = centroids;
             }
             auto end_pam = high_resolution_clock::now();
             auto dur = duration_cast<microseconds>(end_pam - start_pam);
             times.push_back(to_string(dur.count() / 1000000));
         }
     }
-    return make_tuple(best_clustering, times);
+    return make_tuple(best_clustering, times, best_centroids);
 }
 
 tuple<float, vector<int>> prepare_clustering_based_on_centroids(vector<Point *> centroids, vector<Point *> points, int minkowski_n)

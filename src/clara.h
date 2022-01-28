@@ -17,7 +17,7 @@
 using namespace std;
 using namespace std::chrono;
 
-tuple<vector<int>, vector<string>> clara(
+tuple<vector<int>, vector<string>, vector<Point *>> clara(
     vector<Point *> points,
     int cluster_count,
     int random_group_count = 10,
