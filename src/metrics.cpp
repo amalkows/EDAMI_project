@@ -184,7 +184,7 @@ float silhouette_i(int point, int cluster, int cluster_size, vector<float> avera
     if (cluster_size == 1)
         return 0;
 
-    float a = average_dist_to_all_points_in_cluster[cluster];
+    float a = cluster >= 0 ? average_dist_to_all_points_in_cluster[cluster] : 0;
     float b = numeric_limits<float>::max();
 
     int cluster_count = average_dist_to_all_points_in_cluster.size();
@@ -209,9 +209,12 @@ vector<int> calculate_cluster_sizes(vector<int> clusters)
     int cluster_count = *max_element(clusters.begin(), clusters.end()) + 1;
     vector<int> cluster_sizes(cluster_count);
 
+    // for (int k = 0; k < cluster_count; k++)
+    //     cluster_sizes[k] = 0;
+
     for (int k = 0; k < clusters.size(); k++)
-        if (k >= 0)
-            cluster_sizes[k]++;
+        if (clusters[k] >= 0)
+            cluster_sizes[clusters[k]]++;
 
     return cluster_sizes;
 }
@@ -232,6 +235,11 @@ float silhouette_coefficient(vector<Point *> points, vector<int> clusters)
             result += silhouette_i(i, clusters[i], cluster_sizes[clusters[i]], average_dist_to_all_points_in_cluster[i]);
             points_in_clusters++;
         }
+    // else
+    // {
+    //     result += silhouette_i(i, -2, 1, average_dist_to_all_points_in_cluster[i]);
+    //     points_in_clusters++;
+    // }
 
     return result / points_in_clusters;
 }
