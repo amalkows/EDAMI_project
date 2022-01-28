@@ -35,7 +35,7 @@ int factorial(int i)
     return result;
 }
 
-float rand_score(vector<int> true_clusters, vector<int> predicted_clusters)
+std::tuple<float, int, int, int> rand_score(vector<int> true_clusters, vector<int> predicted_clusters)
 {
     int n = true_clusters.size();
 
@@ -56,7 +56,7 @@ float rand_score(vector<int> true_clusters, vector<int> predicted_clusters)
     int numerator = TP + TN;
     int denominator = (n * (n - 1)) / 2;
 
-    return (float)numerator / (float)denominator;
+    return std::make_tuple((float)numerator / (float)denominator, TP, TN, denominator);
 }
 
 vector<Point *> calculate_centroids(vector<Point *> points, vector<int> clusters)

@@ -7,6 +7,7 @@
 #include <cmath>
 #include <queue>
 #include <limits>
+#include <tuple>
 #include "utils.h"
 #include "data.h"
 
@@ -14,7 +15,7 @@ using namespace std;
 
 float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters);
 int factorial(int i);
-float rand_score(vector<int> true_clusters, vector<int> predicted_clusters);
+std::tuple<float, int, int, int> rand_score(vector<int> true_clusters, vector<int> predicted_clusters);
 vector<Point *> calculate_centroids(vector<Point *> points, vector<int> clusters);
 vector<float> calculate_average_distance_of_points_to_centroids(
     vector<Point *> points,
