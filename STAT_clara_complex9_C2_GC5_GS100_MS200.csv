@@ -1,0 +1,20 @@
+Data name: complex9
+Cluster count: 2
+Random group count: 5
+Random group size: 100
+Max swaps:200
+Time of data loading [s]: 0
+Time of 0 PAM [s]: 0
+Time of 1 PAM [s]: 0
+Time of 2 PAM [s]: 0
+Time of 3 PAM [s]: 0
+Time of 4 PAM [s]: 0
+Time of processing [s]: 0
+Avg metric calculation per point: 36.331245
+TP : 675150
+TN : 2116390
+# pairs : 4591965
+Rand score : 0.607918
+Pruity score : 0.451336
+Silhouette coefficient : 0.492088
+Davies Bouldin : 0.788621

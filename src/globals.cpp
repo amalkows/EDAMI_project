@@ -6,8 +6,8 @@ std::string debug_name = "";
 
 void write_to_file(std::string path, std::string text)
 {
-    std::ofstream myfile;
-    myfile.open(path);
-    myfile << text;
-    myfile.close();
+    std::ofstream file;
+    file.open(path);
+    file << text;
+    file.close();
 }

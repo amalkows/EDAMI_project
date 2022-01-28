@@ -20,7 +20,12 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
     float best_dist = numeric_limits<float>::max();
     vector<int> best_clustering;
     vector<Point *> best_centroids;
+    string best_debug_string;
     vector<string> times;
+
+    std::ofstream debug_file;
+    debug_file.open(debug_name);
+
     if (multithread)
     {
         //optimization!
@@ -35,17 +40,38 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
             vector<Point *> centroids = pam(datasets[i], cluster_count, minkowski_n, max_swap, optimized_pam_init);
             auto res = prepare_clustering_based_on_centroids(centroids, points, minkowski_n);
             float curr_dist = get<0>(res);
+
+            auto end_pam = high_resolution_clock::now();
+            auto dur = duration_cast<microseconds>(end_pam - start_pam);
+            times.push_back(to_string(dur.count() / 1000000));
+
+            string debug_information = "=============== PAM " + to_string(i) + " ===============\n";
+            debug_information += "Disimilarity: " + to_string(curr_dist) + "\n";
+            debug_information += "Medoids: \n";
+            for (int j = 0; j < cluster_count; ++j)
+            {
+                debug_information += "\t";
+                for (int d = 0; d < centroids[j]->coords.size(); d++)
+                    debug_information += to_string(centroids[j]->coords[d]) + ",";
+                debug_information += "\n";
+            }
+
             if (curr_dist < best_dist)
             {
                 best_clustering = get<1>(res);
                 best_dist = curr_dist;
                 best_centroids = centroids;
+                best_debug_string = debug_information;
             }
-            auto end_pam = high_resolution_clock::now();
-            auto dur = duration_cast<microseconds>(end_pam - start_pam);
-            times.push_back(to_string(dur.count() / 1000000));
+
+            debug_file << debug_information;
         }
     }
+
+    debug_file << "\n\n";
+    debug_file << "=========== Best medoids ============\n";
+    debug_file << best_debug_string;
+
     return make_tuple(best_clustering, times, best_centroids);
 }
 
@@ -67,10 +93,11 @@ tuple<float, vector<int>> prepare_clustering_based_on_centroids(vector<Point *> 
                 best_centroid = j;
             }
         }
+        distance += best_centroid_dist;
         clustering[i] = best_centroid;
     }
 
-    return {distance, clustering};
+    return {distance / points.size(), clustering};
 }
 
 vector<Point *> draw_data(vector<Point *> points, int random_group_size)

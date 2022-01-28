@@ -121,7 +121,7 @@ int main(int argc, char **argv)
         stat_text += "Cluster count: " + std::to_string(clouster_count) + "\n";
         stat_text += "Random group count: " + std::to_string(random_group_count) + "\n";
         stat_text += "Random group size: " + std::to_string(random_group_size) + "\n";
-        stat_text += "Max swaps:" + std::to_string(max_swap) + "\n";
+        stat_text += "Max swaps: " + std::to_string(max_swap) + "\n";
     }
     else if (model_name == "dbscan")
     {

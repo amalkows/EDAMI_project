@@ -13,6 +13,7 @@
 
 #include "utils.h"
 #include "data.h"
+#include "globals.h"
 
 using namespace std;
 using namespace std::chrono;
