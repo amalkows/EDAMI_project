@@ -9,13 +9,15 @@
 #include <stdlib.h>
 #include <limits>
 #include <tuple>
+#include <chrono>
 
 #include "utils.h"
 #include "data.h"
 
 using namespace std;
+using namespace std::chrono;
 
-vector<int> clara(
+tuple<vector<int>, vector<string>> clara(
     vector<Point *> points,
     int cluster_count,
     int random_group_count = 10,

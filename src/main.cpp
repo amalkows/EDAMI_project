@@ -11,20 +11,6 @@
 using namespace std;
 using namespace std::chrono;
 
-/*
-    int cluster_count,
-    int random_group_count,
-    int random_group_size,
-    int minkowski_n,
-    int max_swap,
-    bool multithread,
-    bool optimized_pam_init)
-*/
-
-/*
-float eps, int min_pts, int minkowski_n
-*/
-
 int main(int argc, char **argv)
 {
     if ((argc != 7) & (argc != 5))
@@ -38,7 +24,6 @@ int main(int argc, char **argv)
     string data_name = argv[2];
     int clouster_count, random_group_count, random_group_size, max_swap, min_pts;
     float eps;
-    // string out_name, stat_name, debug_name;
     int minkowski_n = 2;
     if (model_name == "clara")
     {
@@ -46,7 +31,6 @@ int main(int argc, char **argv)
         random_group_count = stoi(argv[4]);
         random_group_size = stoi(argv[5]);
         max_swap = stoi(argv[6]);
-        // minkowski_n = stoi(argv[7]);
 
         string params = (model_name + "_" + data_name +
                          "_C" + std::to_string(clouster_count) +
@@ -61,7 +45,6 @@ int main(int argc, char **argv)
     {
         eps = stof(argv[3]);
         min_pts = stoi(argv[4]);
-        // minkowski_n = stoi(argv[5]);
 
         string params = (model_name + "_" + data_name + "_eps" + std::to_string(eps) + "_min_pts" + std::to_string(min_pts) + "_GS");
         out_name = ("OUT_" + params + ".csv");
@@ -73,12 +56,15 @@ int main(int argc, char **argv)
 
     Data dataset = load_data(data_name);
     auto end_loading_data_time = high_resolution_clock::now();
+    auto data_load_duration = duration_cast<microseconds>(end_loading_data_time - start_program_time);
 
     vector<int> clustering;
-
+    vector<string> times;
     if (model_name == "clara")
     {
-        clustering = clara(dataset.points, clouster_count, random_group_count, random_group_size, minkowski_n, max_swap);
+        auto clustering_res = clara(dataset.points, clouster_count, random_group_count, random_group_size, minkowski_n, max_swap);
+        clustering = get<0>(clustering_res);
+        times = get<1>(clustering_res);
     }
     else if (model_name == "dbscan")
     {
@@ -127,7 +113,18 @@ int main(int argc, char **argv)
         stat_text += "min_pts: " + std::to_string(min_pts) + "\n";
     }
 
-    // partial time statstics
+    stat_text += "Time of data loading [s]: " + std::to_string(data_load_duration.count() / 1000000) + "\n";
+
+    if (model_name == "clara")
+    {
+        for (int i = 0; i < times.size(); ++i)
+        {
+            stat_text += "Time of " + to_string(i) + " PAM [s]: " + times[i] + "\n";
+        }
+    }
+    else if (model_name == "dbscan")
+    {
+    }
 
     stat_text += "Time of processing [s]: " + std::to_string(program_duration.count() / 1000000) + "\n";
     if (model_name == "dbscan")
