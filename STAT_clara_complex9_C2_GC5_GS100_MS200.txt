@@ -13,10 +13,10 @@ Time of 3 PAM [s]: 0
 Time of 4 PAM [s]: 0
 Time of processing [s]: 0
 Avg metric calculation per point: 36.331245
-TP : 695040
-TN : 2137160
+TP : 696416
+TN : 2137920
 Pairs count : 4591965
-Rand score : 0.616773
-Pruity score : 0.466843
-Silhouette coefficient : 0.494234
-Davies Bouldin : 0.784164
+Rand score : 0.617238
+Pruity score : 0.467502
+Silhouette coefficient : 0.494161
+Davies Bouldin : 0.784155

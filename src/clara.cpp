@@ -1,5 +1,7 @@
 #include "clara.h"
 
+std::ofstream debug_file;
+
 tuple<vector<int>, vector<string>, vector<Point *>> clara(
     vector<Point *> points,
     int cluster_count,
@@ -23,7 +25,6 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
     string best_debug_string;
     vector<string> times;
 
-    std::ofstream debug_file;
     debug_file.open(debug_name);
 
     if (multithread)
@@ -37,6 +38,9 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
             auto start_pam = high_resolution_clock::now();
 
             std::cout << "PAM number: " << i << endl;
+            debug_file << "=============== PAM " + to_string(i) + " ===============\n";
+            string debug_information = "=============== PAM " + to_string(i) + " ===============\n";
+
             vector<Point *> centroids = pam(datasets[i], cluster_count, minkowski_n, max_swap, optimized_pam_init);
             auto res = prepare_clustering_based_on_centroids(centroids, points, minkowski_n);
             float curr_dist = get<0>(res);
@@ -45,15 +49,23 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
             auto dur = duration_cast<microseconds>(end_pam - start_pam);
             times.push_back(to_string(dur.count() / 1000000));
 
-            string debug_information = "=============== PAM " + to_string(i) + " ===============\n";
             debug_information += "Disimilarity: " + to_string(curr_dist) + "\n";
             debug_information += "Medoids: \n";
+            debug_file << "Disimilarity: " + to_string(curr_dist) + "\n";
+            debug_file << "Medoids: \n";
             for (int j = 0; j < cluster_count; ++j)
             {
                 debug_information += "\t";
+                debug_file << "\t";
+                debug_information += to_string(centroids[j]->index) + ": ";
+                debug_file << to_string(centroids[j]->index) + ": ";
                 for (int d = 0; d < centroids[j]->coords.size(); d++)
+                {
                     debug_information += to_string(centroids[j]->coords[d]) + ",";
+                    debug_file << to_string(centroids[j]->coords[d]) + ",";
+                }
                 debug_information += "\n";
+                debug_file << "\n";
             }
 
             if (curr_dist < best_dist)
@@ -63,8 +75,6 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
                 best_centroids = centroids;
                 best_debug_string = debug_information;
             }
-
-            debug_file << debug_information;
         }
     }
 
@@ -137,6 +147,16 @@ vector<Point *> pam(vector<Point *> points, int cluster_count, int minkowski_n, 
     vector<int> centroids = centroids_data[0];
     vector<int> non_centroids = centroids_data[1];
 
+    debug_file << "Subset of points: ";
+    for (int i = 0; i < points.size(); ++i)
+        debug_file << points[i]->index << ",";
+    debug_file << endl;
+
+    debug_file << "Init centroids: ";
+    for (int i = 0; i < centroids.size(); ++i)
+        debug_file << points[centroids[i]]->index << ",";
+    debug_file << endl;
+
     for (int swap_index = 0; swap_index < max_swap; ++swap_index)
     {
         int min_T_i;
@@ -178,7 +198,11 @@ vector<Point *> pam(vector<Point *> points, int cluster_count, int minkowski_n, 
             }
         }
         if (min_T > 0)
+        {
+            debug_file << "Reached optimal medoids!" << endl;
             break;
+        }
+        debug_file << "SWAP centroid " << points[centroids[min_T_i]]->index << " with non centroid " << points[non_centroids[min_T_h]]->index << " with T score " << min_T << endl;
 
         int tmp = centroids[min_T_i];
         centroids[min_T_i] = non_centroids[min_T_h];
