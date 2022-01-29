@@ -71,8 +71,8 @@ int main(int argc, char **argv)
     {
         auto clustering_res = dbscan(dataset.points, eps, min_pts, minkowski_n);
         clustering = get<0>(clustering_res);
-        // times = get<1>(clustering_res);
-        point_types = get<1>(clustering_res);
+        times = get<1>(clustering_res);
+        point_types = get<2>(clustering_res);
     }
 
     auto end_program_time = high_resolution_clock::now();
@@ -141,7 +141,8 @@ int main(int argc, char **argv)
             stat_text += "Time of " + to_string(i) + " PAM [s]: " + times[i] + "\n";
     else if (model_name == "dbscan")
     {
-        //time of subparts
+        stat_text += "Time of calculating similarity matrix [s]: " + times[0] + "\n";
+        stat_text += "Time of clustering loop [s]: " + times[1] + "\n";
     }
 
     stat_text += "Time of processing [s]: " + std::to_string(program_duration.count() / 1000000) + "\n";

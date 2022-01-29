@@ -14,9 +14,13 @@ vector<int> eps_neighborhood(
     return result;
 }
 
-tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n)
+tuple<vector<int>, vector<string>, vector<int>> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n)
 {
-    //time of prepare matrix
+    vector<string> times;
+    std::ofstream debug_file;
+    debug_file.open(debug_name);
+
+    auto start = high_resolution_clock::now();
     vector<vector<float>> distance_points_matrix(points.size());
     for (int i = 0; i < points.size(); ++i)
     {
@@ -28,6 +32,9 @@ tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int mi
         distances_tmp[i] = 0;
         distance_points_matrix[i] = distances_tmp;
     }
+    auto end = high_resolution_clock::now();
+    auto dur = duration_cast<microseconds>(end - start);
+    times.push_back(to_string(dur.count() / 1000000));
 
     const int NON_VISITED_YET = -2;
     const int NON_CORE = -1;
@@ -40,7 +47,7 @@ tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int mi
     int current_cluster = -1;
     bool durning_create_cluster = false;
 
-    //time of processing
+    start = high_resolution_clock::now();
     for (int current_point = 0; current_point < points.size(); current_point++)
     {
         if (clustering[current_point] >= NON_CORE)
@@ -50,7 +57,8 @@ tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int mi
 
         seeds.push(current_point);
 
-        // debug current point oddzielacz
+        debug_file << "=============== Point " + to_string(current_point) + " ===============\n";
+        debug_file << "Is core?: Seed: Points in eps neighborhood\n";
 
         while (!seeds.empty())
         {
@@ -58,7 +66,11 @@ tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int mi
             vector<int> current_eps_neighborhood = eps_neighborhood(
                 seeds.front(), eps, &distance_points_matrix);
 
-            //debug seed - eps neighborhood
+            debug_file << to_string(current_eps_neighborhood.size() >= min_pts) + " : ";
+            debug_file << to_string(seeds.front()) + " : ";
+            for (int i = 0; i < current_eps_neighborhood.size(); ++i)
+                debug_file << to_string(current_eps_neighborhood[i]) + ",";
+            debug_file << endl;
 
             if (current_eps_neighborhood.size() >= min_pts)
             {
@@ -83,12 +95,21 @@ tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int mi
                 }
             }
             else if (clustering[seeds.front()] == NON_VISITED_YET)
+            {
                 clustering[seeds.front()] = NON_CORE;
+            }
 
             seeds.pop();
         }
+        if (durning_create_cluster)
+            debug_file << "Created cluster: " + to_string(current_cluster) << endl;
+        else
+            debug_file << "Noise point" << endl;
         durning_create_cluster = false;
     }
+    end = high_resolution_clock::now();
+    dur = duration_cast<microseconds>(end - start);
+    times.push_back(to_string(dur.count() / 1000000));
 
-    return std::make_tuple(clustering, points_types);
+    return std::make_tuple(clustering, times, points_types);
 }
