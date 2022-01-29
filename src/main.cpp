@@ -16,7 +16,6 @@ int main(int argc, char **argv)
     if ((argc != 7) & (argc != 5))
     {
         std::cout << "Wrong number of parameters!" << std::endl;
-        // wypisz jak powinno wygladac polecenie dla obu
         return -1;
     }
 
@@ -38,8 +37,8 @@ int main(int argc, char **argv)
                          "_GS" + std::to_string(random_group_size) +
                          "_MS" + std::to_string(max_swap));
         out_name = ("OUT_" + params + ".csv");
-        stat_name = ("STAT_" + params + ".csv");
-        debug_name = ("DEBUG_" + params + ".csv");
+        stat_name = ("STAT_" + params + ".txt");
+        debug_name = ("DEBUG_" + params + ".txt");
     }
     else if (model_name == "dbscan")
     {
@@ -48,8 +47,8 @@ int main(int argc, char **argv)
 
         string params = (model_name + "_" + data_name + "_eps" + std::to_string(eps) + "_min_pts" + std::to_string(min_pts) + "_GS");
         out_name = ("OUT_" + params + ".csv");
-        stat_name = ("STAT_" + params + ".csv");
-        debug_name = ("DEBUG_" + params + ".csv");
+        stat_name = ("STAT_" + params + ".txt");
+        debug_name = ("DEBUG_" + params + ".txt");
     }
 
     auto start_program_time = high_resolution_clock::now();
@@ -86,7 +85,7 @@ int main(int argc, char **argv)
         string row_text = "";
         row_text += std::to_string(dataset.points[i]->index) + ",";
         for (int d = 0; d < dataset.points[i]->coords.size(); d++)
-            row_text += std::to_string(dataset.points[i]->coords[d]) + ","; //na pozniej - poprawic zeby zapisywal jako inty nie floaty
+            row_text += std::to_string(dataset.points[i]->coords[d]) + ",";
 
         row_text += std::to_string(dataset.points[i]->metric_calculate_count) + ",";
         if (model_name == "clara")
@@ -116,6 +115,9 @@ int main(int argc, char **argv)
     string stat_text = "";
 
     stat_text += "Data name: " + data_name + "\n";
+    stat_text += "Points count: " + std::to_string(dataset.points.size()) + "\n";
+    stat_text += "Points dimension: " + std::to_string(dataset.points[0]->coords.size()) + "\n";
+
     if (model_name == "clara")
     {
         stat_text += "Cluster count: " + std::to_string(clouster_count) + "\n";
@@ -156,6 +158,8 @@ int main(int argc, char **argv)
     stat_text += "TN : " + std::to_string(std::get<2>(rand_res)) + "\n";
     stat_text += "# pairs : " + std::to_string(std::get<3>(rand_res)) + "\n";
     stat_text += "Rand score : " + std::to_string(std::get<0>(rand_res)) + "\n";
+
+    //to do - sprawdzic jak licza sie metryki - czy zgodnei z ocekiwaniami
 
     stat_text += "Pruity score : " + std::to_string(pruity_score(dataset.labels, clustering)) + "\n";
     stat_text += "Silhouette coefficient : " + std::to_string(silhouette_coefficient(dataset.points, clustering)) + "\n";
