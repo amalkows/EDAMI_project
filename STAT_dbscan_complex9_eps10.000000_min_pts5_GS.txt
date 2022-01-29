@@ -1,0 +1,20 @@
+Data name: complex9
+Points count: 3031
+Points dimension: 2
+eps: 10.000000
+min_pts: 5
+Time of data loading [s]: 0
+Time of calculating similarity matrix [s]: 0
+Time of clustering loop [s]: 0
+Time of processing [s]: 0
+Disocvered clusters: 27
+Core points: 2601
+Noise points: 82
+Border points: 348
+Avg metric calculation per point: 3030.000000
+TP : 337142
+TN : 3735792
+Pairs count : 4591965
+Rand score : 0.886970
+Pruity score : 0.972946
+Silhouette coefficient : 0.075943
