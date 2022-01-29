@@ -11,11 +11,7 @@
 #include "data.h"
 using namespace std;
 
-vector<int> eps_neighborhood(
-    Point *ref,
-    vector<Point *> points,
-    float eps,
-    int minkowski_n = 2);
+vector<int> eps_neighborhood(int ref, float eps, vector<vector<float>> *distance_points_matrix);
 
 vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n = 2);
 

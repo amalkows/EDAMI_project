@@ -32,6 +32,5 @@ tuple<float, vector<int>> prepare_clustering_based_on_centroids(vector<Point *> 
 vector<Point *> draw_data(vector<Point *> points, int random_group_size);
 vector<vector<int>> init_centroids(vector<Point *> points, int cluster_count, bool optimized_pam_init);
 tuple<float, float> calculate_d_j(vector<vector<float>> *distance_points_matrix, vector<int> centroids, int j);
-float get_from_distance_point_matrix(vector<vector<float>> *distance_points_matrix, int a, int b);
 
 #endif

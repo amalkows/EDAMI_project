@@ -101,7 +101,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            row_text += "0,";
+            row_text += "0,"; // type of points
         }
         row_text += std::to_string(clustering[i]);
         row_text += '\n';
@@ -138,6 +138,7 @@ int main(int argc, char **argv)
             stat_text += "Time of " + to_string(i) + " PAM [s]: " + times[i] + "\n";
     else if (model_name == "dbscan")
     {
+        //time of subparts
     }
 
     stat_text += "Time of processing [s]: " + std::to_string(program_duration.count() / 1000000) + "\n";

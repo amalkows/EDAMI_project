@@ -119,13 +119,6 @@ vector<Point *> draw_data(vector<Point *> points, int random_group_size)
     return results;
 }
 
-float get_from_distance_point_matrix(vector<vector<float>> *distance_points_matrix, int a, int b)
-{
-    int min_value = min(a, b);
-    int max_value = max(a, b);
-    return distance_points_matrix->at(max_value)[min_value];
-}
-
 vector<Point *> pam(vector<Point *> points, int cluster_count, int minkowski_n, int max_swap, bool optimized_pam_init)
 {
     vector<vector<float>> distance_points_matrix(points.size());

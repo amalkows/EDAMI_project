@@ -1,15 +1,14 @@
 #include "dbscan.h"
 
 vector<int> eps_neighborhood(
-    Point *ref,
-    vector<Point *> points,
+    int ref,
     float eps,
-    int minkowski_n)
+    vector<vector<float>> *distance_points_matrix)
 {
     vector<int> result;
 
-    for (int i = 0; i < points.size(); i++)
-        if (minkowski_distance(ref, points[i], minkowski_n) < eps)
+    for (int i = 0; i < distance_points_matrix->size(); i++)
+        if (get_from_distance_point_matrix(distance_points_matrix, ref, i) < eps)
             result.push_back(i);
 
     return result;
@@ -17,6 +16,18 @@ vector<int> eps_neighborhood(
 
 vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n)
 {
+    vector<vector<float>> distance_points_matrix(points.size());
+    for (int i = 0; i < points.size(); ++i)
+    {
+        vector<float> distances_tmp(i + 1);
+        for (int j = 0; j < i; ++j)
+        {
+            distances_tmp[j] = minkowski_distance(points[i], points[j], minkowski_n);
+        }
+        distances_tmp[i] = 0;
+        distance_points_matrix[i] = distances_tmp;
+    }
+
     const int NON_VISITED_YET = -2;
     const int NON_CORE = -1;
 
@@ -39,7 +50,7 @@ vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski
         while (!seeds.empty())
         {
             vector<int> current_eps_neighborhood = eps_neighborhood(
-                points[seeds.front()], points, eps, minkowski_n);
+                seeds.front(), eps, &distance_points_matrix);
 
             if (current_eps_neighborhood.size() >= min_pts)
             {
