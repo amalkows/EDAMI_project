@@ -57,7 +57,7 @@ int main(int argc, char **argv)
     auto end_loading_data_time = high_resolution_clock::now();
     auto data_load_duration = duration_cast<microseconds>(end_loading_data_time - start_program_time);
 
-    vector<int> clustering;
+    vector<int> clustering, point_types;
     vector<string> times;
     vector<Point *> medoids;
     if (model_name == "clara")
@@ -69,7 +69,10 @@ int main(int argc, char **argv)
     }
     else if (model_name == "dbscan")
     {
-        clustering = dbscan(dataset.points, eps, min_pts, minkowski_n);
+        auto clustering_res = dbscan(dataset.points, eps, min_pts, minkowski_n);
+        clustering = get<0>(clustering_res);
+        // times = get<1>(clustering_res);
+        point_types = get<1>(clustering_res);
     }
 
     auto end_program_time = high_resolution_clock::now();
@@ -101,7 +104,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            row_text += "0,"; // type of points
+            row_text += std::to_string((clustering[i] == -1) ? -1 : point_types[i]) + ",";
         }
         row_text += std::to_string(clustering[i]);
         row_text += '\n';
@@ -144,8 +147,22 @@ int main(int argc, char **argv)
     stat_text += "Time of processing [s]: " + std::to_string(program_duration.count() / 1000000) + "\n";
     if (model_name == "dbscan")
     {
-
-        //statistics about count of clusters etc.
+        int zeros = 0, ones = 0, noise = 0, max_cluster = 0;
+        for (int i = 0; i < dataset.points.size(); ++i)
+        {
+            if (clustering[i] > max_cluster)
+                max_cluster = clustering[i];
+            if (clustering[i] == -1)
+                noise++;
+            if (point_types[i] == 1)
+                ones++;
+            else
+                zeros++;
+        }
+        stat_text += "Disocvered clusters: " + std::to_string(max_cluster) + "\n";
+        stat_text += "Core points: " + std::to_string(ones) + "\n";
+        stat_text += "Noise points: " + std::to_string(noise) + "\n";
+        stat_text += "Border points: " + std::to_string(zeros - noise) + "\n";
     }
 
     float mean_minkowski_count = 0.0;
@@ -157,7 +174,7 @@ int main(int argc, char **argv)
     auto rand_res = rand_score(dataset.labels, clustering);
     stat_text += "TP : " + std::to_string(std::get<1>(rand_res)) + "\n";
     stat_text += "TN : " + std::to_string(std::get<2>(rand_res)) + "\n";
-    stat_text += "# pairs : " + std::to_string(std::get<3>(rand_res)) + "\n";
+    stat_text += "Pairs count : " + std::to_string(std::get<3>(rand_res)) + "\n";
     stat_text += "Rand score : " + std::to_string(std::get<0>(rand_res)) + "\n";
 
     //to do - sprawdzic jak licza sie metryki - czy zgodnei z ocekiwaniami

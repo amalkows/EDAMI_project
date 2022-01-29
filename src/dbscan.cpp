@@ -14,8 +14,9 @@ vector<int> eps_neighborhood(
     return result;
 }
 
-vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n)
+tuple<vector<int>, vector<int>> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski_n)
 {
+    //time of prepare matrix
     vector<vector<float>> distance_points_matrix(points.size());
     for (int i = 0; i < points.size(); ++i)
     {
@@ -31,13 +32,15 @@ vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski
     const int NON_VISITED_YET = -2;
     const int NON_CORE = -1;
 
-    vector<int> clustering;
+    vector<int> clustering, points_types(points.size());
+
     for (int i = 0; i < points.size(); i++)
         clustering.push_back(NON_VISITED_YET);
 
     int current_cluster = -1;
     bool durning_create_cluster = false;
 
+    //time of processing
     for (int current_point = 0; current_point < points.size(); current_point++)
     {
         if (clustering[current_point] >= NON_CORE)
@@ -47,10 +50,15 @@ vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski
 
         seeds.push(current_point);
 
+        // debug current point oddzielacz
+
         while (!seeds.empty())
         {
+
             vector<int> current_eps_neighborhood = eps_neighborhood(
                 seeds.front(), eps, &distance_points_matrix);
+
+            //debug seed - eps neighborhood
 
             if (current_eps_neighborhood.size() >= min_pts)
             {
@@ -61,6 +69,7 @@ vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski
                 }
 
                 clustering[current_point] = current_cluster;
+                points_types[seeds.front()] = 1;
 
                 for (int neighbor_index = 0; neighbor_index < current_eps_neighborhood.size(); neighbor_index++)
                 {
@@ -81,5 +90,5 @@ vector<int> dbscan(vector<Point *> points, float eps, int min_pts, int minkowski
         durning_create_cluster = false;
     }
 
-    return clustering;
+    return std::make_tuple(clustering, points_types);
 }
