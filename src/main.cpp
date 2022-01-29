@@ -83,6 +83,11 @@ int main(int argc, char **argv)
     //PERPARE OUT
 
     string out_text = "";
+    out_text += "index,";
+    for (int i = 0; i < dataset.points[0]->coords.size(); ++i)
+        out_text += "dim " + to_string(i) + ",";
+    out_text += "avg. sim. calc.,type,cls\n";
+
     for (int i = 0; i < dataset.points.size(); i++)
     {
         string row_text = "";
