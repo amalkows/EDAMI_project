@@ -77,10 +77,9 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
             }
         }
     }
-
     debug_file << "\n\n";
     debug_file << "=========== Best medoids ============\n";
-    debug_file << best_debug_string;
+    debug_file << best_debug_string << endl;
 
     return make_tuple(best_clustering, times, best_centroids);
 }
@@ -197,20 +196,23 @@ vector<Point *> pam(vector<Point *> points, int cluster_count, int minkowski_n, 
                 }
             }
         }
-        if (min_T > 0)
+        if (min_T >= 0)
         {
             debug_file << "Reached optimal medoids!" << endl;
             break;
         }
-        if (swao_index == max_swap - 1)
+        if (swap_index == max_swap - 1)
         {
             debug_file << "Reached swap limit!" << endl;
         }
-        debug_file << "SWAP centroid " << points[centroids[min_T_i]]->index << " with non centroid " << points[non_centroids[min_T_h]]->index << " with T score " << min_T << endl;
+        if (min_T < 0)
+        {
+            debug_file << "SWAP centroid " << points[centroids[min_T_i]]->index << " with non centroid " << points[non_centroids[min_T_h]]->index << " with T score " << min_T << endl;
 
-        int tmp = centroids[min_T_i];
-        centroids[min_T_i] = non_centroids[min_T_h];
-        non_centroids[min_T_h] = tmp;
+            int tmp = centroids[min_T_i];
+            centroids[min_T_i] = non_centroids[min_T_h];
+            non_centroids[min_T_h] = tmp;
+        }
     }
 
     vector<Point *> res(cluster_count);
