@@ -202,6 +202,10 @@ vector<Point *> pam(vector<Point *> points, int cluster_count, int minkowski_n, 
             debug_file << "Reached optimal medoids!" << endl;
             break;
         }
+        if (swao_index == max_swap - 1)
+        {
+            debug_file << "Reached swap limit!" << endl;
+        }
         debug_file << "SWAP centroid " << points[centroids[min_T_i]]->index << " with non centroid " << points[non_centroids[min_T_h]]->index << " with T score " << min_T << endl;
 
         int tmp = centroids[min_T_i];
