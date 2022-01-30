@@ -29,7 +29,6 @@ tuple<vector<int>, vector<string>, vector<Point *>> clara(
 
     if (multithread)
     {
-        //optimization!
     }
     else
     {
@@ -238,7 +237,6 @@ tuple<float, float> calculate_d_j(vector<vector<float>> *distance_points_matrix,
     return {min_d_j, second_min_d_j};
 }
 
-//BUILD BEZ OPTYMALIZACJI - i fajnie! mozna tutaj dac optymalizacje jako druga wersje - wybrac obiekty o najmniejszej sumie odleglosci do wszystkich innych
 vector<vector<int>> init_centroids(vector<Point *> points, int cluster_count, bool optimized_pam_init)
 {
     //init random numer generator

@@ -124,7 +124,6 @@ vector<vector<float>> calculate_distance_between_centroids(vector<Point *> centr
 
 float davies_bouldin_score(vector<Point *> points, vector<int> predicted_clusters)
 {
-    //length assert
     int n = points.size();
 
     vector<Point *> centroids = calculate_centroids(points, predicted_clusters);
@@ -209,9 +208,6 @@ vector<int> calculate_cluster_sizes(vector<int> clusters)
     int cluster_count = *max_element(clusters.begin(), clusters.end()) + 1;
     vector<int> cluster_sizes(cluster_count);
 
-    // for (int k = 0; k < cluster_count; k++)
-    //     cluster_sizes[k] = 0;
-
     for (int k = 0; k < clusters.size(); k++)
         if (clusters[k] >= 0)
             cluster_sizes[clusters[k]]++;
@@ -235,11 +231,6 @@ float silhouette_coefficient(vector<Point *> points, vector<int> clusters)
             result += silhouette_i(i, clusters[i], cluster_sizes[clusters[i]], average_dist_to_all_points_in_cluster[i]);
             points_in_clusters++;
         }
-    // else
-    // {
-    //     result += silhouette_i(i, -2, 1, average_dist_to_all_points_in_cluster[i]);
-    //     points_in_clusters++;
-    // }
 
     return result / points_in_clusters;
 }

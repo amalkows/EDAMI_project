@@ -185,8 +185,6 @@ int main(int argc, char **argv)
         stat_text += "Pairs count : " + std::to_string(std::get<3>(rand_res)) + "\n";
         stat_text += "Rand score : " + std::to_string(std::get<0>(rand_res)) + "\n";
 
-        //to do - sprawdzic jak licza sie metryki - czy zgodnei z ocekiwaniami
-
         stat_text += "Pruity score : " + std::to_string(pruity_score(dataset.labels, clustering)) + "\n";
     }
     stat_text += "Silhouette coefficient : " + std::to_string(silhouette_coefficient(dataset.points, clustering)) + "\n";
@@ -196,6 +194,5 @@ int main(int argc, char **argv)
 
     write_to_file(stat_name, stat_text);
 
-    //TODO free dataset
     return 0;
 }
