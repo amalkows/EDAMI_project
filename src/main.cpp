@@ -177,15 +177,18 @@ int main(int argc, char **argv)
     mean_minkowski_count /= dataset.points.size();
     stat_text += "Avg metric calculation per point: " + std::to_string(mean_minkowski_count) + "\n";
 
-    auto rand_res = rand_score(dataset.labels, clustering);
-    stat_text += "TP : " + std::to_string(std::get<1>(rand_res)) + "\n";
-    stat_text += "TN : " + std::to_string(std::get<2>(rand_res)) + "\n";
-    stat_text += "Pairs count : " + std::to_string(std::get<3>(rand_res)) + "\n";
-    stat_text += "Rand score : " + std::to_string(std::get<0>(rand_res)) + "\n";
+    if (data_name != "toy")
+    {
+        auto rand_res = rand_score(dataset.labels, clustering);
+        stat_text += "TP : " + std::to_string(std::get<1>(rand_res)) + "\n";
+        stat_text += "TN : " + std::to_string(std::get<2>(rand_res)) + "\n";
+        stat_text += "Pairs count : " + std::to_string(std::get<3>(rand_res)) + "\n";
+        stat_text += "Rand score : " + std::to_string(std::get<0>(rand_res)) + "\n";
 
-    //to do - sprawdzic jak licza sie metryki - czy zgodnei z ocekiwaniami
+        //to do - sprawdzic jak licza sie metryki - czy zgodnei z ocekiwaniami
 
-    stat_text += "Pruity score : " + std::to_string(pruity_score(dataset.labels, clustering)) + "\n";
+        stat_text += "Pruity score : " + std::to_string(pruity_score(dataset.labels, clustering)) + "\n";
+    }
     stat_text += "Silhouette coefficient : " + std::to_string(silhouette_coefficient(dataset.points, clustering)) + "\n";
 
     if (model_name == "clara")
