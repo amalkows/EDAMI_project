@@ -1,6 +1,6 @@
 #include "metrics.h"
 
-float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters)
+float purity_score(vector<int> true_clusters, vector<int> predicted_clusters)
 {
     int n = true_clusters.size();
     int result = 0;

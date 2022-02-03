@@ -165,7 +165,7 @@ int main(int argc, char **argv)
             else
                 zeros++;
         }
-        stat_text += "Disocvered clusters: " + std::to_string(max_cluster) + "\n";
+        stat_text += "Disocvered clusters: " + std::to_string(max_cluster + 1) + "\n";
         stat_text += "Core points: " + std::to_string(ones) + "\n";
         stat_text += "Noise points: " + std::to_string(noise) + "\n";
         stat_text += "Border points: " + std::to_string(zeros - noise) + "\n";
@@ -185,7 +185,7 @@ int main(int argc, char **argv)
         stat_text += "Pairs count : " + std::to_string(std::get<3>(rand_res)) + "\n";
         stat_text += "Rand score : " + std::to_string(std::get<0>(rand_res)) + "\n";
 
-        stat_text += "Pruity score : " + std::to_string(pruity_score(dataset.labels, clustering)) + "\n";
+        stat_text += "Purity score : " + std::to_string(purity_score(dataset.labels, clustering)) + "\n";
     }
     stat_text += "Silhouette coefficient : " + std::to_string(silhouette_coefficient(dataset.points, clustering)) + "\n";
 

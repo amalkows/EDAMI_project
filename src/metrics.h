@@ -13,7 +13,7 @@
 
 using namespace std;
 
-float pruity_score(vector<int> true_clusters, vector<int> predicted_clusters);
+float purity_score(vector<int> true_clusters, vector<int> predicted_clusters);
 int factorial(int i);
 std::tuple<float, int, int, int> rand_score(vector<int> true_clusters, vector<int> predicted_clusters);
 vector<Point *> calculate_centroids(vector<Point *> points, vector<int> clusters);
